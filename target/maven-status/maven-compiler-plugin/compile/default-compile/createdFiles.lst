@@ -1,6 +1,0 @@
-com/abyeti/model/GitHubData.class
-com/abyeti/util/Util.class
-com/abyeti/model/GitHubRepositoryData.class
-com/abyeti/rest/RequestService.class
-com/abyeti/services/HandlerHackerRank.class
-com/abyeti/services/HandlerGitHub.class
