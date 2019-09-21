@@ -4,13 +4,16 @@ import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
+import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 
+import com.abyeti.plagiarism.PlagiarismChecker;
 import org.json.simple.JSONObject;
 
 import com.abyeti.model.GitHubData;
 import com.abyeti.services.HandlerGitHub;
 import com.abyeti.services.HandlerHackerRank;
+import java.io.IOException;
 
 /**
  * @author vipulchasta
@@ -62,6 +65,13 @@ public class RequestService {
 
 		JSONObject jsonObject = HandlerHackerRank.getUserData(username);
 
+		return jsonObject;
+	}
+	@GET
+	@Path("/plagiarism/")
+	@Produces(MediaType.APPLICATION_JSON)
+	public JSONObject getPlagiarsimReport(@QueryParam("dirpath") String dirpath) throws IOException {
+		JSONObject jsonObject= PlagiarismChecker.getReportsForDirectory(dirpath);
 		return jsonObject;
 	}
 }
