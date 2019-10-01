@@ -1,0 +1,49 @@
+Flow Of GitHub API To get the commits and files contributed
+
+
+
+1. Getting The Commits
+
+
+Search User:
+	https://api.github.com/search/users?q=chasta.vipul@gmail.com+in:email				-> JSONObject
+	https://api.github.com/search/users?q=vipulchasta+in:username				-> JSONObject
+
+Get Repos URL(doc.items[0].repos_url:String of previously fetched data):
+	https://api.github.com/users/vipulchasta/repos     									-> JSONArray of repos
+
+Iterate in each repo
+	Let Repo be: Game-2048
+	
+	- Get All Branches for the particular repo
+		https://api.github.com/repos/vipulchasta/Game-2048/branches     				-> JSONArray of Branches
+
+		Iterate in each branch of the repo
+		Let Branch be: master
+
+		- Get branch's Detail
+			https://api.github.com/repos/vipulchasta/Game-2048/branches/master			-> JSONObject of containg branch detail and latest commit
+
+			- Get Top Commit (doc.commit.url:String of previously fetched data)
+				https://api.github.com/repos/vipulchasta/Game-2048/git/commits/6bda2a031d7c99460e64d2d8b84b51c75da79a83
+
+				- Get the parent commit by looking at the parents of the commit(doc.parents.url:String of previously fetched data)
+					https://api.github.com/repos/vipulchasta/Game-2048/commits/56a87c87154f0dabca71e88a0a95d33856c2d037
+
+					- Get the parent commit by looking at the parent of the commit(doc.parents.url:String of previously fetched data)
+						https://api.github.com/repos/vipulchasta/Game-2048/git/commits/8d42af6369ed76864e396371f5bec4b8ec64ed62
+
+						- .... and so on till the doc.parent.url is not null
+
+
+
+2. Getting The Files Present At a Particular Commit
+
+Get Any Commit
+	https://api.github.com/repos/vipulchasta/Game-2048/git/commits/6bda2a031d7c99460e64d2d8b84b51c75da79a83			-> JSONObject
+
+	- Get File Tree (doc.tree.url:String of previously fetched data)
+		https://api.github.com/repos/vipulchasta/Game-2048/git/trees/b99dc8b2bdacf8c4fc9f3047c8047978e2552290		-> JSONObject
+
+		- Iterate in List of files (doc.tree:JSONArray of previously fetched data)
+			For Each tree node fetch the doc.tree[o].url, if it will be a folder you will get file tree or if it is a file you will get doc.content:String 
