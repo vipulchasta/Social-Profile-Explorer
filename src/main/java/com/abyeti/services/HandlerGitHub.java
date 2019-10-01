@@ -30,7 +30,8 @@ public class HandlerGitHub {
 	// final static String API_AppendEnd =
 	// "?client_id=$API_CLIENT_ID$&client_secret=$API_CLIENT_SECRET$";
 
-	final static String API_GITHUB = "https://api.github.com/search/users?q=$USER_EMAIL$+in:email?client_id=$API_CLIENT_ID$&client_secret=$API_CLIENT_SECRET$";
+	final static String API_GITHUB_EMAIL = "https://api.github.com/search/users?q=$USER_EMAIL$+in:email?client_id=$API_CLIENT_ID$&client_secret=$API_CLIENT_SECRET$";
+	final static String API_GITHUB_USERNAME = "https://api.github.com/search/users?q=$USER_USERNAME$+in:username?client_id=$API_CLIENT_ID$&client_secret=$API_CLIENT_SECRET$";
 	final static String API_GITHUB_APPEND = "?client_id=$API_CLIENT_ID$&client_secret=$API_CLIENT_SECRET$";
 
 	static boolean isPoolInitialized = false;
@@ -67,18 +68,69 @@ public class HandlerGitHub {
 
 		API_CLIENT_INDEX++;
 		API_HIT_COUNTER++;
-		
-		System.out.println("API_HIT_COUNTER: "+ API_HIT_COUNTER + ", API_CLIENT_INDEX: " + API_CLIENT_INDEX);
+
+		System.out.println("API_HIT_COUNTER: " + API_HIT_COUNTER + ", API_CLIENT_INDEX: " + API_CLIENT_INDEX);
 		return str;
 	}
 
 	@SuppressWarnings("unchecked")
-	public static GitHubData getUserData(String emailId) {
+	public static GitHubData getUserDataByEmail(String emailId) {
 
 		GitHubData gitHubData = new GitHubData();
 		Map<String, GitHubRepositoryData> repoMap = new HashMap<String, GitHubRepositoryData>();
 
-		String myRequest = API_GITHUB.replace("$USER_EMAIL$", emailId);
+		String myRequest = API_GITHUB_EMAIL.replace("$USER_EMAIL$", emailId);
+
+		Client client = ClientBuilder.newClient();
+
+		JSONObject jsonObject = new JSONObject();
+		jsonObject = client.target(myRequest + getApiAppender()).request(MediaType.APPLICATION_JSON)
+				.get(JSONObject.class);
+
+		Integer found = (Integer) jsonObject.get("total_count");
+		if (found == 1) {
+			ArrayList<HashMap<String, Object>> jsonArray = (ArrayList<HashMap<String, Object>>) jsonObject.get("items");
+			HashMap<String, Object> userProfile = jsonArray.get(0);
+
+			String userName = (String) userProfile.get("login");
+			String reposUrl = (String) userProfile.get("repos_url");
+			Double score = (Double) userProfile.get("score");
+
+			gitHubData.setUsername(userName);
+			gitHubData.setScore(score);
+			gitHubData.setRepos(repoMap);
+
+			Map<String, String> reposAndBranchesLink = getReposAndBranchesLink(repoMap, reposUrl);
+			Map<String, String> reposAndTopCommitLink = getReposAndTopCommitLink(repoMap, reposAndBranchesLink);
+
+			// jsonResponse.put("reposAndBranchesLink", reposAndBranchesLink);
+			// jsonResponse.put("reposAndTopCommitLink", reposAndTopCommitLink);
+
+			for (String repos : reposAndTopCommitLink.keySet()) {
+				parseCommitAndItsParanetCommit(userName, repoMap.get(repos), reposAndTopCommitLink.get(repos));
+			}
+
+			for (String repoName : repoMap.keySet()) {
+				GitHubRepositoryData repo = repoMap.get(repoName);
+				for (String tech : repo.getTechStack()) {
+					gitHubData.addTechStack(tech);
+				}
+			}
+
+		} else {
+			// jsonResponse.put("message", "No User Activity");
+		}
+
+		return gitHubData;
+	}
+
+	@SuppressWarnings("unchecked")
+	public static GitHubData getUserDataByUsername(String username) {
+
+		GitHubData gitHubData = new GitHubData();
+		Map<String, GitHubRepositoryData> repoMap = new HashMap<String, GitHubRepositoryData>();
+
+		String myRequest = API_GITHUB_USERNAME.replace("$USER_USERNAME$", username);
 
 		Client client = ClientBuilder.newClient();
 

@@ -40,7 +40,7 @@ public class RequestService {
 	@Produces(MediaType.APPLICATION_JSON)
 	public GitHubData restGetGitHubDataByEmail(@PathParam("emailId") String emailId) {
 
-		GitHubData githubData = HandlerGitHub.getUserData(emailId);
+		GitHubData githubData = HandlerGitHub.getUserDataByEmail(emailId);
 
 		return githubData;
 	}
@@ -50,7 +50,7 @@ public class RequestService {
 	@Produces(MediaType.APPLICATION_JSON)
 	public GitHubData restGetGitHubDataByUsername(@PathParam("username") String username) {
 
-		GitHubData githubData = HandlerGitHub.getUserData(username);
+		GitHubData githubData = HandlerGitHub.getUserDataByUsername(username);
 
 		return githubData;
 	}
