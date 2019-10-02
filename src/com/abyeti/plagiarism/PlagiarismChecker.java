@@ -35,7 +35,8 @@ public class PlagiarismChecker {
 //        List<String> candidateAsTokens = getTokensFromFile(candidateFile);
         System.out.println(getReportsForDirectory(TRAINING_DATA_DIR_PATH));
     }
-    public static JSONObject getReportsForDirectory(String path) throws IOException {
+    @SuppressWarnings("unchecked")
+	public static JSONObject getReportsForDirectory(String path) throws IOException {
         buildTrainingData(path);
          Map<File,Double> redundancyMap;
         redundancyMap = new HashMap<>();
@@ -78,7 +79,8 @@ public class PlagiarismChecker {
     }
 
     private static List<String> getTokensFromFile(File file) throws IOException {
-        BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(new FileInputStream(file.getAbsolutePath())));
+        @SuppressWarnings("resource")
+		BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(new FileInputStream(file.getAbsolutePath())));
         Tokenizer tokenizer = new Tokenizer(JavaKeywords.getInstance());
         JavaKeywords java = new JavaKeywords();
         tokenizer.setLanguage(java);
@@ -137,7 +139,8 @@ public class PlagiarismChecker {
         return prepends;
     }
 
-    private static Map<List<String>, Integer> substringCounter(List<String> tokenizedInput) {
+    @SuppressWarnings("unused")
+	private static Map<List<String>, Integer> substringCounter(List<String> tokenizedInput) {
         HashMap<List<String>, Integer> subStringCountMap = new HashMap<>();
         int substringMaxLength = 20;
         for (int i = tokenizedInput.size() - substringMaxLength - 1; i >= 0; i--) {
