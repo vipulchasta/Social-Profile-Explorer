@@ -22,14 +22,6 @@ import com.abyeti.util.Util;
  */
 public class HandlerGitHub {
 
-	// final static String API_GitSearch =
-	// "https://api.github.com/search/users?q=$USER_EMAIL$+in:email";
-	// final static String API_ClientID = "a7c81ded87b1cc462ed1";
-	// final static String API_ClientSecret =
-	// "4969c55ab90af58e22fdbb77a0a48d9b8eb4c075";
-	// final static String API_AppendEnd =
-	// "?client_id=$API_CLIENT_ID$&client_secret=$API_CLIENT_SECRET$";
-
 	final static String API_GITHUB_EMAIL = "https://api.github.com/search/users?q=$USER_EMAIL$+in:email?client_id=$API_CLIENT_ID$&client_secret=$API_CLIENT_SECRET$";
 	final static String API_GITHUB_USERNAME = "https://api.github.com/search/users?q=$USER_USERNAME$+in:username?client_id=$API_CLIENT_ID$&client_secret=$API_CLIENT_SECRET$";
 	final static String API_GITHUB_APPEND = "?client_id=$API_CLIENT_ID$&client_secret=$API_CLIENT_SECRET$";
